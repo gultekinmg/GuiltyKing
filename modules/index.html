@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>JZZ modules</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="../javascript/MIDI.js"></script>
+<script src="../javascript/timbre.js"></script>
+<script src="../javascript/JZZ.js"></script>
+<script src="../javascript/JZZ.synth.MIDIjs.js"></script>
+<script src="../javascript/JZZ.synth.Timbre.js"></script>
+<script src="../javascript/JZZ.synth.OSC.js"></script>
+<script src="../javascript/JZZ.synth.Tiny.js"></script>
+<script src="../javascript/qwerty-hancock.js"></script>
+<script src="../javascript/JZZ.input.Qwerty.js"></script>
+<script src="../javascript/JZZ.input.Kbd.js"></script>
+<script src="../javascript/JZZ.input.ASCII.js"></script>
+</head>
+
+<body>
+<h1>JZZ modules</h1>
+
+<div id=out><p>JavaScript is disabled</p></div>
+<script><!--
+var out = document.getElementById('out');
+out.innerHTML = "<p>Reading MIDI info...</p>";
+JZZ.synth.MIDIjs.register();
+if (typeof T !== 'undefined' && T instanceof Function && T.version) {
+  JZZ.synth.Timbre.register(T("OscGen"));
+}
+JZZ.synth.OSC.register();
+JZZ.synth.Tiny.register();
+JZZ.input.Qwerty.register();
+JZZ.input.Kbd.register();
+JZZ.input.ASCII.register();
+JZZ().and(function(){
+  var s1 = "";
+  var outs = this.info().outputs;
+  for (var i = 0; i < outs.length; i++) {
+    s1 += "<li>" + outs[i].name + "<ul><li>v." + outs[i].version + " - " + outs[i].manufacturer + " (" + outs[i].engine + ")</li></ul></li>";
+  }
+  if (!outs.length) s1 += "<li>not found</li>";
+  var s2 = "";
+  var ins = this.info().inputs;
+  for (var i = 0; i < ins.length; i++) {
+    s2 += "<li>" + ins[i].name + "<ul><li>v." + ins[i].version + " - " + ins[i].manufacturer + " (" + ins[i].engine + ")</li></ul></li>";
+  }
+  if (!ins.length) s2 += "<li>not found</li>";
+  out.innerHTML = "<p>MIDI Out:<ul>" + s1 + "</ul></p><p>MIDI In:<ul>" + s2 + "</ul></p>";
+});
+--></script>
+
+<p>
+<a href=smf/index.html>JZZ.midi.SMF</a>
+</p><p>
+<a href=gear/index.html>JZZ.midi.Gear</a>
+</p><p>
+<a href=midijs/index.html>JZZ.synth.MIDIjs</a>
+</p><p>
+<a href=timbre/index.html>JZZ.synth.Timbre</a>
+</p><p>
+<a href=osc/index.html>JZZ.synth.OSC</a>
+</p><p>
+<a href=tiny/index.html>JZZ.synth.Tiny</a>
+</p><p>
+<a href=qwerty/index.html>JZZ.input.Qwerty</a>
+</p><p>
+<a href=kbd/index.html>JZZ.input.Kbd</a>
+</p><p>
+<a href=ascii/index.html>JZZ.input.Kbd + JZZ.input.ASCII</a>
+</p><p>
+<a href=knobs/index.html>JZZ.input.Knobs</a>
+</p><p>
+Engine test: <a href=jzz-npapi.html>NPAPI</a>
+</p><p>
+Engine test: <a href=jzz-webmidi.html>WebMIDI</a>
+</p><p>
+Engine test: <a href=jzz-crx.html>Web extension</a>
+</p><p>
+Engine test: <a href=jzz-all.html>All above</a>
+</p><p>
+<a href=https://github.com/jazz-soft/JZZ-modules>JZZ modules at GitHub</a>
+</p><p>
+<a href=../index.html>Home</a>
+</p>
+
+</body>
+</html>
