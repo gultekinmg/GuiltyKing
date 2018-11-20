@@ -1,4 +1,5 @@
 
-body { background: #555;}
+body { background: #555; text-align: center; border: 3px solid green;}
 .content { max-width: 500px;  margin: auto;  background: white;  padding: 10px;}
-img{max-width:100%;}
+.right {float: right; width: 300px; border: 3px solid #73AD21; padding: 10px;}
+img {max-width:100%;    display: block;    margin-left: auto;    margin-right: auto;}
