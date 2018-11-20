@@ -1,0 +1,321 @@
+<html><head><title>,,,PGN_parsing_functions_fread&write_multi.pgn_pbar_sore.html</title></head>
+<body>
+	<script src="./c0_chess.js" type="text/javascript"></script>
+	<script src="./c0_pgn.js" type="text/javascript"></script>
+	<script src="./jquery9.min.js"></script>
+	<style> 
+		table,tr,th,td { border:1px solid black; }
+		#div_AnotLines, #div_disp3, #div_disp4 { /* sample-cp */
+			background-color:lightblue; width:560px;
+			overflow:visible; word-wrap:break-word;}
+		#div_outputDisplay { position:absolute; top:0px; left:620px;
+			border-top: 5px solid #69c773; background:yellow;
+			box-shadow: 0 2px 10px rgba(0,0,0,0.8); }
+		#progress_bar { position:absolute; top:0px; left:500px; width:100px;
+			border: 1px solid #000;
+			font-size: 14px; clear: both; opacity: 0;
+			-moz-transition: opacity 1s linear;
+			-o-transition: opacity 1s linear;
+			-webkit-transition: opacity 1s linear;}
+		#progress_bar.loading { opacity: 1.0; }
+		#progress_bar.percent { background-color: #99ccff; height: auto; width: 0; }
+		#progress_bar .percent { background-color: #99ccff; height: auto; width: 0; }		
+	</style>
+	<table> Chessforeva utilized PGN parsing no:8080
+		<tr bgcolor="#FF0000"><td>Read file.pgn:  
+			<input type="file" id="fileinput" />
+			<button onclick="reader.abort();">Cancel</button></td>
+		</tr>
+		<tr bgcolor="#00FF00"><td colspan="2"> Clipboard :
+			<button id="colored_btn" onclick="dSample_2();"><i>pastedPgn2anot</i></button> / 
+			<button id="colored_btn" onclick="dSample_4();"><i>pastedPgn2short</i></button>
+			</td>
+		</tr>
+		<tr bgcolor="yellow"><td colspan="2"><i>Sample procedure </i>
+			<button id="colored_btn" onclick="samplePGNtext();"><i>Example</i></button><i>1.STEP Copy Source PGN text & submit.</i>
+			<button id="displyhiden" onclick="document.getElementById('dispnone').style.display='block';">About</button>
+			</td>
+		</tr>
+	</table>
+	<div>PGN Text to convert:</br>
+		<textarea id="xA_pgnOutput" rows="16" cols="80" ></textarea></br>
+		<table>File Operations..
+			<tr bgcolor="#FF0000"><td>Filename to Save As:</td>
+				<td><input id="inputFileNameToSaveAs"><span id="file_size"></span></td>
+				<td><button onclick="saveTextAsFile()">Save to Selected</button></td>
+			</tr>
+			<tr bgcolor="#00FF00"><td>Select a File to Load:</td>
+				<td><input type="file" id="fileToLoad"></td>
+				<td><button onclick="loadFileAsText()">Load Selected File</button></td>
+			</tr>
+		</table>
+	</div>
+	<fieldset id="sample" style="width:570px;">
+		<div id="div_AnotLines"></div>
+		<div id="div_disp3"></div>
+		<div id="div_disp4"></div>
+	</fieldset>
+	
+	<div id="div_outputDisplay">
+		PGN Base File: <a id="p_fsz"></a>
+		<button id="convert" style="display:none; float:left;" onclick="convert2Array()">convert2Array</button>
+		<div id="progress_bar"><div class="percent">0%</div></div>
+		<textarea id="xA_PgnFile"rows="20" cols="100" ></textarea><br>
+		Algebraic Notation Base to save: <a id="a_fsz"></a>
+		<a id="sorted" style="display:none; float:left;">Sorted Anotbase..Click </a>
+		<button id="saveblob" style="display:none; float:left;" onclick="saveBlobTextToFile()">Save Anotbase to file</button>
+		<textarea id="xA_AnotBase"rows="20" cols="100" ></textarea>	
+	</div>	
+	
+	<script type="text/javascript"> // Global...
+		PGN_text =  '1.e4 e5 2.Nf3 Nc6 3.Bc4 Bc5 4.b4';
+		Elm_pgnOutput = document.getElementById('xA_pgnOutput');
+		Elm_pgnOutput.value  = PGN_text ;  /* SAMPLE CLIPBOARD text position */
+		content ="";  // fileRead content..
+		lineArr = []; // filr lines
+		TmpDatabase = ""; // text output collection
+		TempDatabase = []; // array output collection to filter
+	</script>
+	<script type="text/javascript"> // fread *.PGN & Convert...
+		var progress = document.querySelector('.percent'); //progress bar..
+		selectedFile = null;
+		document.getElementById('fileinput').addEventListener('change', readSingleFile, false); // file name
+	//
+		function errorHandler(evt){
+			switch(evt.target.error.code) {
+			  case evt.target.error.NOT_FOUND_ERR: alert('File Not Found!'); break;
+			  case evt.target.error.NOT_READABLE_ERR: alert('File is not readable'); break;
+			  case evt.target.error.ABORT_ERR: break; // noop
+			  default: alert('An error occurred reading this file.');
+			};
+		}
+		function updateProgress(evt){
+			if (evt.lengthComputable) {	// evt is an ProgressEvent.
+			  var percentLoaded = Math.round((evt.loaded / evt.total) * 100);
+			  if (percentLoaded < 100) {	// Increase the progress bar length.
+				progress.style.width = percentLoaded + '%';
+				progress.textContent = percentLoaded + '%';
+			  }
+			}
+		}
+	// 				Retrieve first(&only!)_File in FileList object to xA_PgnFile
+		function readSingleFile(evt){ 
+				Elm_pgnOutput.value  = "File_Process_is"; 
+				document.getElementById("saveblob").style.display = 'none';
+				document.getElementById("div_AnotLines").innerHTML = "";
+				document.getElementById("div_disp3").innerHTML = "";
+				document.getElementById("div_disp4").innerHTML = "";
+			selectedFile = evt.target.files[0];
+			if (selectedFile !== null) {
+				progress.style.width = '0%'; progress.textContent = '0%';
+				var reader_rawFile = new FileReader();
+				reader_rawFile.onloadstart = function(e){document.getElementById('progress_bar').className ='loading';};
+				reader_rawFile.onload = function(e) { 
+					content = e.target.result;
+					progress.style.width = '100%';progress.textContent = '100%';
+					setTimeout("document.getElementById('progress_bar').className='';", 100); 
+					//
+					Elm_pgnOutput.value = "name:"+selectedFile.name+"  type:" + 
+						selectedFile.type+"  size:("+((selectedFile.size)/1000).toFixed(0)+"Kb.)\n" ;
+						// why put there..?
+				} 
+				reader_rawFile.onerror = errorHandler;
+				reader_rawFile.onprogress = updateProgress;
+				reader_rawFile.onabort = function(e) { alert('File read cancelled'); };
+				reader_rawFile.readAsText(selectedFile); // alert("read...") fast..
+				// create button.
+				setTimeout(function(){document.getElementById("convert").style.display = 'block';},100);
+			} else { alert("Failed to load file"); }
+		}
+	//				split "xA_PgnFile"2array, "[Event " is splitting data from each new PGN 
+	// 				& get craftynotation...chess_pgn(Parsed PGN data) 
+		function convert2Array(){
+			if (content.length>0) { /////// split games from Whole content.
+				lineArr = content.split('[Event '); // alert(lineArr.length)
+				if (content.length<1e6) {
+					document.getElementById("xA_PgnFile").value = content; // send whole xA_PgnFile
+					document.getElementById('p_fsz').innerHTML = lineArr.length-1+" Games.\n"; }
+				else {
+					document.getElementById("xA_PgnFile").rows="2";
+					document.getElementById("xA_PgnFile").value = "Large File to Display: "+content.length;
+					if (content.length>3e6) document.getElementById("xA_AnotBase").rows="2";
+					document.getElementById('xA_AnotBase').innerHTML = lineArr.length-1+" Games.\n"; }
+				var i=0; // first pgn game is [1]; //alert(content.length);
+				do {
+					PGN_text = '[Event '+lineArr[i]; // bravo...
+					var getAnot = c0_get_from_PGN(PGN_text);			//// getcraftynotation...chess_pgn
+					if (getAnot.length>30) { 							// reduce short games....
+	// 					add result
+						if( PGN_text.indexOf('[Result \"')>=0) {
+							var qResult = PGN_text.substr( PGN_text.indexOf('[Result \"')+9);
+							qResult = qResult.substr(0,qResult.indexOf('"'));//alert(qResult)
+							if (qResult == "1-0") qResult = "w";
+							if (qResult == "1/2-1/2") qResult = "d";
+							if (qResult == "0-1") qResult = "b";
+						}
+	//  				Elm_pgnOutput.value  = PGN_text ; do not shows at page till loop is over
+	// 					var getAnot = tovariables(); // setTimeout(function(){tovariables();},1000); 
+	// 					dont use it is for clipboard
+						if (content.length<3e6) TmpDatabase += '{\"moves\": \"'+getAnot+'\", \"result\": \"'+qResult+'\"},\n';
+						TempDatabase.push({"moves": getAnot, "result": qResult});
+						//var tmp0='PGN.moves for anot.db= </br>'+(i-1)+': <font size="1"><b>'+ getAnot +"</b></font>-"+qResult+"\n" ;
+						//document.getElementById("div_AnotLines").innerHTML = tmp0;
+					}
+				} while (++i<=lineArr.length-1); 				//  
+				Elm_pgnOutput.value  += "\nLast Game(" + (i-1) +") at file: \n"+PGN_text ; 
+				/* do not display here...ifLarge. rather direct put file this..with saveBlobTextToFile()*/
+				if (content.length<3e6) document.getElementById("xA_AnotBase").innerHTML += TmpDatabase ; 
+				TempDatabase.sort(function(a,b){				// sort Array....
+					if (a.moves>b.moves){return 1;}
+					if (a.moves<b.moves){return -1;} 
+					return 0;/*a=b*/
+				});
+				TempDatabase = removeDuplicate(TempDatabase);	// filter same records...
+				// open button..
+				document.getElementById("sorted").style.display = 'block';
+				document.getElementById("saveblob").style.display = 'block';				
+			}// todo: find a proper way to get last pgn move.....
+		}
+		function removeDuplicate(arr){ /* reduces only - needs pre sort*/
+			var exists ={}, outArr = [arr[0]], firstElm, secondElm, preferredFirstElm, yes; 
+			for(var i =0; i<arr.length; i++){
+				firstElm = arr[i].moves;
+				secondElm = arr[i].result;
+				if (i<arr.length-1) nextElm = arr[i+1].moves;
+				// ordered method...............
+				if (firstElm !== nextElm.substr(0,firstElm.length) ) { // no identical.....// no prima....
+					outArr.push({"moves": firstElm ,"result": secondElm});}
+				else { console.log(i+" "+firstElm+":we have:"+nextElm.substr(firstElm.length,nextElm.length) );}
+			}
+			outArr.push({"moves": firstElm ,"result": secondElm}); // last record;
+			return outArr;
+		}	
+	//
+		function saveBlobTextToFile(){ // from variable to blob...
+	// first put into text form.
+			TmpDatabase =  'var ChessOpnDB = [ // from File: '+document.getElementById("fileinput").value+'\n';
+			var i=0; // first pgn game is [1];
+			do { TmpDatabase += '{\"moves\": \"'+TempDatabase[i].moves+'\", \"result\": \"'+TempDatabase[i].result+'\"},\n';
+				} while (++i<=TempDatabase.length-1);
+			TmpDatabase += ']\n//gmg.';	
+	//
+			var textFileAsBlob = new Blob([TmpDatabase], {type:'text/plain'});
+			var downloadLink = document.createElement("a");
+			downloadLink.download = "gmg.json";
+			downloadLink.innerHTML = "Download File";
+			if (window.webkitURL != null) {  downloadLink.href = window.webkitURL.createObjectURL(textFileAsBlob);
+			}	// Chrome allows the link to be clicked without actually adding it to the DOM.
+			downloadLink.click();
+		}
+	</script>	
+	<script type="text/javascript"> // convert pgn "ClipBoard) to A.N.
+		function tovariables(){		// PGN parse to variables:
+			/*  IMPORTANT!!! 
+				If starting FEN is used, then all this stuff is necessary!
+				c0_initall(); c0_draw_empty_board(); c0_set_start_position( "" );
+				FEN function is crosslinked with board.
+			*/
+			var PgnGame =  Elm_pgnOutput.value ;  // alert(PgnGame);
+			var moves = c0_get_from_PGN(PgnGame);  // get Parsed PGN moves
+			var header='';
+			for(var i=0; i<c0_PGN_header.length; i++) header += c0_PGN_header[i] + ", " ; 	//Parse PGN header
+			document.getElementById("div_AnotLines").innerHTML = 
+			'<br>2-Parse PGN.moves for algebraic database= "' + '<font size="1"><b>'+ moves + '</b></font>' + '"';
+			document.getElementById("xA_AnotBase").value = moves;
+			return moves;
+		}
+		//-------------------------- todos
+		function topShort(newPGN){	// Coded-Short-notation of moves generated by these libraries:
+			c0_PGN_short = true; // sets short notation algorithm on
+			var moves2 = c0_get_from_PGN(newPGN);	// now c0_PG_sh contains short notation of c0_moveslist 
+			document.getElementById("div_disp4").innerHTML = 
+				'<font size="2"><i>+Feature of this library (not a chess standard)c0_PGN_short = true; c0_get_from_PGN(newPGN); :</i><br>' +
+				'</font>4-Convert moves to shortNotation of c0_moveslist= "' + '<b>' + c0_PG_sh 
+				+ '</b>' + '" the same as moves;<br>';
+			c0_moveslist='';
+			c0_short2list(); // converts C0_PG_sh short notation to c0_moveslist moves...
+			document.getElementById("div_disp4").innerHTML += 
+				'f(c0_short2list moves)= "' + '<font size="1"><b>' + c0_moveslist 
+				+ '</b></font>' + '"';
+			// alert(c0_D_last_move_was()); only consult anot.
+			return c0_moveslist;
+		} // ==> toShort
+		function toReverse(moves){	// Reverse action - from variables to PGN
+			var add = "h7h6a2a3";
+			var newPGN = c0_put_to_PGN( moves + add ); // add moves to pgn;
+			document.getElementById("div_disp3").innerHTML = 
+				'3-Added moves {<b>'+add+'</b>} & generated PGN.text= "' +
+				'<font size="2"><b>' + newPGN 
+				+ '</b></font>' + '"' 
+				+ 'The game is <a href="./C0_pgn_url.htm?g=' + encodeURI(newPGN) 
+				+ '">Click here to observe your PGN</a>';
+			return newPGN;
+		}
+		//-------------------------- samples
+		function samplePGNtext() {
+			PGN_text =  '1. e4 e6 2. d4 g6 3. d5 Bg7 4. dxe6 fxe6 5. Nf3 Ne7 6. Bg5 '; 
+			Elm_pgnOutput.value  = PGN_text ;
+			setTimeout('dSample_info()',100);
+		}
+		function dSample_info() {	// cp single pgn
+			var dmoves = tovariables();
+			var dPGN = toReverse(dmoves);
+			topShort(dPGN);
+		}
+		function dSample_2() {	// cp single pgn
+			document.getElementById("div_disp3").innerHTML = "";
+			document.getElementById("div_disp4").innerHTML = "";
+			tovariables();
+		}
+		function dSample_4() {	// cp single pgn
+			document.getElementById("div_AnotLines").innerHTML = "";
+			document.getElementById("div_disp3").innerHTML = "";
+			topShort(Elm_pgnOutput.value);
+		}
+		
+	</script>
+	<script type='text/javascript'> // wFile.db & rFile.db ClipBoard
+		function saveTextAsFile() { // from element..
+			var textToWrite = document.getElementById("xA_AnotBase").value;
+			var textFileAsBlob = new Blob([textToWrite], {type:'text/plain'});
+			var fileNameToSaveAs = document.getElementById("inputFileNameToSaveAs").value; 
+			var downloadLink = document.createElement("a");
+			downloadLink.download = fileNameToSaveAs;
+			downloadLink.innerHTML = "Download File";
+			if (window.webkitURL != null) {  downloadLink.href = window.webkitURL.createObjectURL(textFileAsBlob);
+			}// Chrome allows the link to be clicked without actually adding it to the DOM.
+			else { // Firefox requires the link to be added to the DOM before it can be clicked.
+				downloadLink.href = window.URL.createObjectURL(textFileAsBlob);
+				downloadLink.onclick = destroyClickedElement;
+				downloadLink.style.display = "none";
+				document.body.appendChild(downloadLink);
+			} 
+			downloadLink.click();
+		} 
+		function destroyClickedElement(event) { document.body.removeChild(event.target); } 
+		
+		function loadFileAsText() { // to Append
+			var fileToLoad = document.getElementById("fileToLoad").files[0]; 
+			var fileReader = new FileReader();
+			fileReader.onload = function(fileLoadedEvent)  {
+				var textFromFileLoaded = fileLoadedEvent.target.result;
+				document.getElementById("xA_AnotBase").value = textFromFileLoaded;
+				document.getElementById("inputFileNameToSaveAs").value = fileToLoad.name;
+				document.getElementById("file_size").innerHTML = fileToLoad.size+"bit";
+			};
+			fileReader.readAsText(fileToLoad, "UTF-8");
+		} 
+	</script>
+	
+	<script type="text/javascript"> // function backto
+		function backto(){
+			if(history.length>1) { 
+				document.write(
+					'<TABLE border="0" width="100%">'+
+					'<TR><TD align="right"><a href="javascript:history.go(-1)">PageBck</a></TD></TR>'+
+					'</TABLE>');}
+		}
+	</script>
+
+</body>
+</html>

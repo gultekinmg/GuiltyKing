@@ -1,0 +1,67 @@
+[Event "ICS Unrated Chess Match"]
+[Site "?"]
+[Date "2010.07.18"]
+[Round "?"]
+[White "GuestSXJG"]
+[Black "GuestRBZS"]
+[TimeControl "300+0"]
+[Result "1-0"]
+
+1. e4 e6 2. d4 g6 3. d5 Bg7 4. dxe6 fxe6 5. Nf3 Ne7 6. Bg5 c6 7. e5 Qa5+ 
+8. Qd2 Qb6 9. Bxe7 Kxe7 10. Qg5+ Ke8 11. b3 Rf8 12. Bd3 d6 13. c3 dxe5 
+14. Nxe5 Qxf2+ 15. Kd1 Bxe5 16. Qxe5 Qxg2 17. Be4 Rf1+ 18. Rxf1 Qxf1+ 19. Kc2 
+Nd7 20. Qh8+ Qf8 21. Qxh7 Ne5 22. Nd2 Bd7 23. Nc4 Qf2+ 24. Nd2 Rd8 25. Rf1 
+Qe3 26. Bxg6+ Nxg6
+{GuestRBZS checkmated} 1-0
+
+[Event "FICS rated suicide game"]
+[Site "FICS freechess.org"]
+[FICSGamesDBGameNo "356006391"]
+[White "CrossCzech"]
+[Black "Rai"]
+[WhiteElo "2267"]
+[BlackElo "2229"]
+[TimeControl "60+0"]
+[Date "2014.05.08"]
+[Time "19:34:00"]
+[WhiteClock "0:01:00.000"]
+[BlackClock "0:01:00.000"]
+[Variant "suicide"]
+[PlyCount "70"]
+[Result "1-0"]
+
+1. b3 c5 2. e3 c4 3. Bxc4 Nh6 4. Bxf7 Nxf7 5. Ba3 e6 6. Bxf8 Kxf8 7. Nh3 Ng5 8. Nxg5 Qxg5 9. Qg4 Qxg4 10. Rf1 Qxg2 11. h4 Qxf2 12. Rxf2 g5 13. Rxf8 Rxf8 14. hxg5 h6 15. gxh6 Rf4 16. exf4 e5 17. fxe5 d6 18. exd6 Bd7 19. a4 Bxa4 20. Rxa4 Na6 21. Rxa6 bxa6 22. d4 a5 23. b4 axb4 24. Na3 bxa3 25. d7 Rc8 26. dxc8=R a2 27. Rb8 a5 28. h7 a4 29. h8=R a3 30. Ke2 a1=K 31. Rb1 Kxb1 32. Re8 Kxc2 33. Kd3 Kxd3 34. Re7 Kxd4 35. Re4 Kxe4 {White wins by losing all material} 1-0
+
+[Event "ICS Unrated Chess Match"]
+[Site "?"]
+[Date "2010.07.18"]
+[Round "?"]
+[White "GuestSXJG"]
+[Black "GuestRBZS"]
+[TimeControl "300+0"]
+[Result "1-0"]
+
+1. e4 e6 2. d4 g6 3. d5 Bg7 4. dxe6 fxe6 5. Nf3 Ne7 6. Bg5 c6 7. e5 Qa5+ 
+8. Qd2 Qb6 9. Bxe7 Kxe7 10. Qg5+ Ke8 11. b3 Rf8 12. Bd3 d6 13. c3 dxe5 
+14. Nxe5 Qxf2+ 15. Kd1 Bxe5 16. Qxe5 Qxg2 17. Be4 Rf1+ 18. Rxf1 Qxf1+ 19. Kc2 
+Nd7 20. Qh8+ Qf8 21. Qxh7 Ne5 22. Nd2 Bd7 23. Nc4 Qf2+ 24. Nd2 Rd8 25. Rf1 
+Qe3 26. Bxg6+ Nxg6 27. Qf7# 
+{GuestRBZS checkmated} 1-0
+
+[Event "FICS rated suicide game"]
+[Site "FICS freechess.org"]
+[FICSGamesDBGameNo "356006292"]
+[White "CrossCzech"]
+[Black "Rai"]
+[WhiteElo "2252"]
+[BlackElo "2244"]
+[TimeControl "60+0"]
+[Date "2014.05.08"]
+[Time "19:30:00"]
+[WhiteClock "0:01:00.000"]
+[BlackClock "0:01:00.000"]
+[Variant "suicide"]
+[PlyCount "59"]
+[Result "1-0"]
+
+1. c3 e6 2. b4 Bxb4 3. cxb4 c5 4. bxc5 d6 5. cxd6 Qxd6 6. Qc2 Qxh2 7. Qxc8 Qxh1 8. Qxe8 Qxg1 9. Qxb8 Rxb8 10. g3 Qxg3 11. fxg3 Ne7 12. Nc3 b5 13. Nxb5 Rxb5 14. Rb1 Rxb1 15. e4 Rxc1 16. Kd1 Rxd1 17. Bg2 Rxd2 18. e5 Rxg2 19. a4 Rxg3 20. a5 Rb3 21. a6 Rb7 22. axb7 Ra8 23. bxa8=K g6 24. Kxa7 f6 25. exf6 h5 26. fxe7 h4 27. Kb6 h3 28. Kc5 h2 29. Kd5 exd5 30. e8=R {Black resigns} 1-0
