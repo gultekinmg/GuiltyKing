@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html><!-- blow plugin elements to parent  -->
+	<body onload="parent.ParentPAGE = window;">
+	<style>#info {display:block; float:right; position:relative; margin:0px auto; width:50%; padding: 0px;
+		border:none; border-radius:3px; font-size:12px; text-align:center; color: yellow; background:;}
+	</style>
+	<pre id='info'></pre>
+
+	<style>	#themeMENU {position: absolute; z-index: 9; top:0; background-color: #f1f1f1; background:; 
+			padding: 0px; font-family: 'Open Sans', sans-serif; border: 1px solid #d3d3d3;}
+	</style>
+	<div id='themeMENU'>
+		<style>#themeMENUheader{ float:left; padding: 1px; z-index: 10; background-color: #000; color:white; cursor: move;}
+			#themeMENUlist { float:left; z-index: 10; background-color: #2196F3; color:yellow;}
+		</style>
+		<div id="themeMENUheader">Tema</div>
+			<div id="themeMENUlist">
+			<input id='basic' 		type='radio' name='rtoggle' 	value='basic' checked='checked'><label for='basic'>org.</label>
+			<input id='streets' 	type='radio' name='rtoggle'		value='streets'>								<label for='streets'>str.</label>
+			<input id='bright' 		type='radio' name='rtoggle' 	value='bright'>									<label for='bright'>day</label>
+			<input id='light' 		type='radio' name='rtoggle' 	value='light'>									<label for='light'>sun</label>
+			<input id='dark' 			type='radio' name='rtoggle' 	value='dark'>										<label for='dark'>drk</label>
+			<input id='satellite' type='radio' name='rtoggle' 	value='satellite'>							<label for='satellite'>sat.</label>
+		</div>			
+	</div>
+	<script>//Make the DIV element draggable:
+	dragElement(document.getElementById("themeMENU"));
+	function dragElement(elmnt) {
+		var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+		if (document.getElementById(elmnt.id + "header")) {
+		document.getElementById(elmnt.id + "header").onmousedown = dragMouseDown;/* if present, the header is where you move the DIV from:*/
+		} else {elmnt.onmousedown = dragMouseDown;}/* otherwise, move the DIV from anywhere inside the DIV:*/
+		function dragMouseDown(e) {e = e || window.event; e.preventDefault(); 
+			pos3 = e.clientX;pos4 = e.clientY;// get the mouse cursor position at startup:
+			document.onmouseup = closeDragElement;
+			document.onmousemove = elementDrag;    // call a function whenever the cursor moves:
+		}
+		function elementDrag(e) {e = e || window.event; e.preventDefault();    
+			pos1 = pos3 - e.clientX; pos2 = pos4 - e.clientY; pos3 = e.clientX; pos4 = e.clientY;// calculate the new cursor position:
+			elmnt.style.top = (elmnt.offsetTop - pos2) + "px"; elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";// set the element's new position:
+		}
+		function closeDragElement() {/* stop moving when mouse button is released:*/
+			document.onmouseup = null;
+			document.onmousemove = null;
+		}
+	}
+	</script>
+
+
+</body>
+</html>
